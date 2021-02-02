@@ -44,16 +44,16 @@ class Cell:
             return Cell(1)
 
     def __mul__(self, other):
-        return Cell(self.count * other.count)
+        return Cell(self._count * other.count)
 
     def __truediv__(self, other):
-        return Cell(self.count // other.count)
+        return Cell(self._count // other.count)
 
     def make_order(self, order):
         result = ''
-        for i in range(self.count // order):
+        for i in range(self._count // order):
             result += '*' * order + '\n'
-        result += '*' * (self.count % order)
+        result += '*' * (self._count % order)
         return result
 
 
