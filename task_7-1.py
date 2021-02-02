@@ -24,13 +24,14 @@ class Matrix:
             result += '\n'
         return result
 
-    def __add__(self, add_matrix):
-        # не стал реализовывать сложение матриц разных размеров, в задании нет, да и не об этом урок ))))
-        result = []
-        for i in range(len(self.matrix)):
-            result.append([self.matrix[i][j] + add_matrix.matrix[i][j] for j in range(len(self.matrix[i]))])
-        return Matrix(result)
-
+    def __add__(self, other):
+        if len(self.matrix) * len(self.matrix[0]) == len(other.matrix) * len(other.matrix[0]):
+            for i in range(len(self.matrix)):
+                for j in range(len(self.matrix[i])):
+                    self.matrix[i][j] += other.matrix[i][j]
+            return self
+        else:
+            return f'В задании не указана возможность сложения матриц разных размеров )))'
 
 table1 = Matrix(matrix_list1)
 table2 = Matrix(matrix_list2)

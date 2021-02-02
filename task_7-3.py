@@ -25,27 +25,23 @@
 
 class Cell:
     def __init__(self, count):
-        self._count = 1
-        self.count = count
+        self._count = count
 
     @property
     def count(self):
+        if self._count < 1:
+            self._count = 1
         return self._count
 
-    @count.setter
-    def count(self, count):
-        self._count = count if count > 0 else 1
-
     def __add__(self, other):
-        return Cell(self.count + other.count)
+        return Cell(self._count + other.count)
 
     def __sub__(self, other):
-        if self.count - other.count > 0:
-            return Cell(self.count - other.count)
+        if self._count - other.count > 0:
+            return Cell(self._count - other.count)
         else:
-            print('Клетки не могут быть вычтены')
-            # оставляем без изменений
-            return Cell(self.count)
+            print('Клеток не могут быть меньше одной')
+            return Cell(1)
 
     def __mul__(self, other):
         return Cell(self.count * other.count)
@@ -66,9 +62,13 @@ a, b = Cell(17), Cell(9)
 print('Количество клеток в организме a -', a.count)
 print('Количество клеток в организме b -', b.count)
 print()
-print('Сумма a и b -', (a + b).count)
-print('Разность a и b -', (a - b).count)
-print('Произведение a и b -', (a * b).count)
-print('Деление a и b -', (a / b).count)
+c = a + b
+print('Сумма a и b -', c.count)
+c = a - b
+print('Разность a и b -', c.count)
+c = a * b
+print('Произведение a и b -', c.count)
+c = a / b
+print('Деление a и b -', c.count)
 print()
 print(a.make_order(5))
