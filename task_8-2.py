@@ -10,12 +10,12 @@ class OtherError(Exception):
         self.txt = txt
 
 
-a, b = input('Введите делимое: '), input('Введите делитель: ')
 
 try:
+    a, b = int(input('Введите делимое: ')), int(input('Введите делитель: '))
     if int(b) == 0:
         raise OtherError('На ноль делить "низзя"!')
-    a = int(a) / int(b)
+    a /= b
 
 except ValueError:
     print("Вы ввели не число")

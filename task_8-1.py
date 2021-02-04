@@ -32,7 +32,9 @@ class StrDate:
             return False
 
 
-d = StrDate('12-02-2021')
+d = StrDate(input('Введите дату в формате "ДД-ММ-ГГГГ": '))
 
 if d.correct(d.date):
-    print(*d.date)
+    print(f'Дата {d.date} корректна!)')
+else:
+    print('Такой даты не существует')
