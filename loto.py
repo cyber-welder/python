@@ -61,8 +61,10 @@ from random import shuffle, sample, randint
 
 class Gamer:
     """ Игрок. Принимает имя игрока. Методом pull_card получает карточку (Card) """
-
     def __init__(self, name):
+        """
+        :param name: имя игрока
+        """
         self.name = name
         self.gamer_card = []    # карточка игрока
         self.answer = ''    # ответ
@@ -70,6 +72,10 @@ class Gamer:
         self.end_card = False   # заполненость карточки
 
     def pull_card(self, gamer_card):
+        """
+        Присваивает карточку игроку
+        :param gamer_card: карточка игрока
+        """
         self.gamer_card = gamer_card
 
 
@@ -101,20 +107,27 @@ class Card:
 
 class Bag:
     """ Мешок с бочонками (1-90). Метод pull_barrel вытаскивает бочонки по одному пока они не кончатся """
-
     def __init__(self):
         self.barrels = list(map(str, range(1, 91)))
         shuffle(self.barrels)
 
     def pull_barrel(self):
+        """
+        Метод "достает" бочонок
+        :return: возвращает номер изъятого бочонка
+        """
         if len(self.barrels):
             return self.barrels.pop()
 
 
 class Game:
-    """ Игра. Принимает сложность игры 0-3, мешок (Bag) и игроков (Gamer) """
-
+    """ Игра """
     def __init__(self, diff, bag, *gamers):
+        """
+        :param diff: сложность 0-3
+        :param bag: список с бочонками (Bag)
+        :param gamers: игроки (Gamer)
+        """
         self.gamers = gamers
         self.bag = bag
         self.diff = 3 - int(diff)
@@ -124,8 +137,10 @@ class Game:
         return barrel in gamer.gamer_card.cells
 
     def _end_card(self):
-        """ Проверяет заполнение карточек игроков.
-         Возвращает строку с победителями или пустую если их нет"""
+        """
+         Проверяет заполнение карточек игроков.
+        :return: строка с победителями или пустая если их нет
+        """
         result, draw = '', 0
         for gamer in self.gamers:
             gamer.end_card = True
@@ -144,9 +159,11 @@ class Game:
             return ''
 
     def _check_answer(self, barrel):
-        """ Проверяет правильность ответов.
-        Принимает номер бочонка,
-        возвращает строку с выводом проигравших или пустую, если их нет"""
+        """
+        Проверяет правильность ответов
+        :param barrel: номер бочонка
+        :return: строка с проигравшими или пустая, если их нет
+        """
         result, draw = '', 0
         for gamer in self.gamers:
             if self._available(gamer, barrel):
@@ -199,6 +216,6 @@ gamer2 = Gamer('Compukter')
 gamer1.pull_card(Card())
 gamer2.pull_card(Card())
 
-game = Game(input('Введите сложность игры числом (сложнее - легче, 3 - 0): '), bag, gamer1, gamer2)
+game = Game(input('Введите сложность игры числом от 3 (сложно) до 0 (легко): '), bag, gamer1, gamer2)
 
 game.start()
