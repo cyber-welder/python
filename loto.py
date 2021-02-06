@@ -56,4 +56,151 @@
 
 """
 
+from random import shuffle, sample, randint
+
+
+class Gamer:
+    """ Игрок. Принимает имя игрока. Методом pull_card получает карточку (Card) """
+    def __init__(self, name):
+        self.name = name
+        self.gamer_card = []
+        self.answer = ''
+        self.true_answer = True
+        self.end_card = False
+
+    def pull_card(self, gamer_card):
+        self.gamer_card = gamer_card
+
+
+class Card:
+    """ Карточка. Генерируется при создании"""
+    def __init__(self):
+        self.cells, cells = [], []
+        nums = [['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+                ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19'],
+                ['20', '21', '22', '23', '24', '25', '26', '27', '28', '29'],
+                ['30', '31', '32', '33', '34', '35', '36', '37', '38', '39'],
+                ['40', '41', '42', '43', '44', '45', '46', '47', '48', '49'],
+                ['50', '51', '52', '53', '54', '55', '56', '57', '58', '59'],
+                ['60', '61', '62', '63', '64', '65', '66', '67', '68', '69'],
+                ['70', '71', '72', '73', '74', '75', '76', '77', '78', '79'],
+                ['80', '81', '82', '83', '84', '85', '86', '87', '88', '89', '90']]
+
+        unique_nums = [sample(dec, 3) for dec in nums]
+        for i in range(3):
+            cells.append([n[i] for n in unique_nums])
+            empty = sample(cells[i], 4)
+            for c in empty:
+                cells[i][cells[i].index(c)] = ' '
+            self.cells.extend(cells[i])
+
+    def __str__(self):
+        return '\n'.join(['\t'.join(list(map(str, self.cells[9*i:9*i+9]))) for i in range(3)])
+
+
+class Bag:
+    """ Мешок с бочонками (1-90). Метод pull_barrel вытаскивает бочонки по одному пока они не кончатся """
+    def __init__(self):
+        self.barrels = list(map(str, range(1, 91)))
+        shuffle(self.barrels)
+
+    def pull_barrel(self):
+        if len(self.barrels):
+            return self.barrels.pop()
+
+
+class Game:
+    """ Игра. Принимает сложность игры 0-3, мешок (Bag) и игроков (Gamer) """
+    def __init__(self, diff, bag, *gamers):
+        self.gamers = gamers
+        self.bag = bag
+        self.diff = 3 - int(diff)
+
+    @staticmethod
+    def _available(gamer, barrel):
+        return barrel in gamer.gamer_card.cells
+
+    def _end_card(self):
+        """ Проверяет заполнение карточек игроков.
+         Возвращает строку с победителями или пустую если их нет"""
+        result, draw = '',  0
+        for gamer in self.gamers:
+            gamer.end_card = True
+            for i in gamer.gamer_card.cells:
+                if i.isdigit():
+                    gamer.end_card = False
+            draw += gamer.end_card
+            if gamer.end_card:
+                result += f'Победил игрок {gamer.name}'.center(len(gamer.name)+17, ' ').center(34, '-') + '\n'
+
+        if len(result):
+            if draw > 1:
+                result += '!!!Ничья!!!'.center(34, '=')
+            return result
+        else:
+            return ''
+
+    def _check_answer(self, barrel):
+        """ Проверяет правильность ответов.
+        Принимает номер бочонка,
+        возвращает строку с выводом проигравших или пустую, если их нет"""
+        result, draw = '', 0
+        for gamer in self.gamers:
+            if self._available(gamer, barrel):
+                gamer.gamer_card.cells[gamer.gamer_card.cells.index(barrel)] = '-'
+                gamer.true_answer = True if gamer.answer.lower() == 'y' else False
+            else:
+                gamer.true_answer = False if gamer.answer.lower() == 'y' else True
+            draw += gamer.true_answer
+            if not gamer.true_answer:
+                result += f'Игрок {gamer.name} проиграл'.center(len(gamer.name)+17, ' ').center(34, '-') + '\n'
+
+        if len(result):
+            if not draw:
+                result += '!!!Ничья!!!'.center(34, '=')
+            return result
+        else:
+            return ''
+
+    def start(self):
+        while True:
+            chance = randint(1, 100)
+            barrel = bag.pull_barrel()
+            print('Бочонок с номером:', barrel, 'Осталось:', len(self.bag.barrels))
+            for gamer in self.gamers:
+                print(gamer.name.center((len(gamer.name) + 2), ' ').center(34, '-'))
+                print(gamer.gamer_card)
+                print('-' * 34)
+            self.gamers[0].answer = input('Зачеркнуть цифру? (y/n): ')
+            self.gamers[1].answer = 'y' if self._available(self.gamers[1], barrel) else 'n'
+            if chance < self.diff * 5:
+                self.gamers[1].answer = 'y' if self.gamers[1].answer == 'n' else 'n'
+            print()
+            print('=' * 34)
+
+            result = self._check_answer(barrel)
+            if len(result):
+                return result
+
+            result = self._end_card()
+            if len(result):
+                return result
+
+
+bag = Bag()
+
+gamer1 = Gamer('Puper User') #Gamer(input('Введите свое имя: '))
+gamer2 = Gamer('Compukter')
+
+gamer1.pull_card(Card())
+gamer2.pull_card(Card())
+
+game = Game(input('Введите сложность игры числом (сложнее - легче, 3 - 0): '), bag, gamer1, gamer2)
+
+print(game.start())
+
+
+
+
+
 
